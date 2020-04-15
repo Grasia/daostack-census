@@ -169,4 +169,6 @@ if __name__ == '__main__':
     df['n_proposals'] = df2['n_proposals'].tolist()
     df['n_votes'] = df3['n_votes'].tolist()
     df['n_stakes'] = df4['n_stakes'].tolist()
-    print(df)
+    
+    df.to_csv('datawarehouse/census.csv', sep=';', index=False)
+    print('DONE. Data stored in datawarehouse/census.csv')
