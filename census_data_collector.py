@@ -1,3 +1,4 @@
+import os
 import json
 import pandas as pd
 from graphqlclient import GraphQLClient
@@ -165,10 +166,30 @@ if __name__ == '__main__':
     df3: pd.DataFrame = get_votes()
     df4: pd.DataFrame = get_stakes()
 
-    df = df1
-    df['n_proposals'] = df2['n_proposals'].tolist()
-    df['n_votes'] = df3['n_votes'].tolist()
-    df['n_stakes'] = df4['n_stakes'].tolist()
-    
-    df.to_csv('datawarehouse/census.csv', sep=';', index=False)
-    print('DONE. Data stored in datawarehouse/census.csv')
+    df1['n_proposals'] = df2['n_proposals'].tolist()
+    df1['n_votes'] = df3['n_votes'].tolist()
+    df1['n_stakes'] = df4['n_stakes'].tolist()
+    df1['ETH'] = 0.0
+    df1['GEN'] = 0.0
+    df1['otherTokens'] = 0.0
+
+    # load holdings
+    filename: str = ''
+    for (dirpath, dirnames, filenames) in os.walk('datawarehouse'):
+        for file in filenames:
+            if 'dao_holdings' in file:
+                filename = os.path.join(dirpath, file)  
+
+    df5: pd.DataFrame = pd.read_csv(filename, sep=';', header=0)
+
+    # add holdings by id
+    for i, row in df1.iterrows():
+        r = df5[df5['id'] == row['id']]
+        df1.loc[i, 'ETH'] = r.iloc[0]['ETH']
+        df1.loc[i, 'GEN'] = r.iloc[0]['GEN']
+        df1.loc[i, 'otherTokens'] = r.iloc[0]['otherTokens']
+
+
+    out_file: str = os.path.join('datawarehouse', 'census.csv')
+    df1.to_csv(out_file, sep=';', index=False)
+    print(f'DONE. Data stored in {out_file}')
