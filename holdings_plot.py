@@ -20,3 +20,11 @@ if __name__ == '__main__':
     # Change the bar mode
     fig.update_layout(barmode='stack')
     fig.show()
+
+    eth = sum(df['ETH'].tolist())
+    gen = sum(df['GEN'].tolist())
+    others = sum(df['otherTokens'].tolist())
+    total = eth + gen + others
+
+    print(f'Stats: \n  ETH = {round(eth/total*100, 2)}%\n  GEN = \
+{round(gen/total*100, 2)}%\n  Others = {round(others/total*100, 2)}%')
