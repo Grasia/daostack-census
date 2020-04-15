@@ -180,7 +180,7 @@ if __name__ == '__main__':
             if 'dao_holdings' in file:
                 filename = os.path.join(dirpath, file)  
 
-    df5: pd.DataFrame = pd.read_csv(filename, sep=';', header=0)
+    df5: pd.DataFrame = pd.read_csv(filename, header=0)
 
     # add holdings by id
     for i, row in df1.iterrows():
@@ -191,5 +191,5 @@ if __name__ == '__main__':
 
 
     out_file: str = os.path.join('datawarehouse', 'census.csv')
-    df1.to_csv(out_file, sep=';', index=False)
+    df1.to_csv(out_file, index=False)
     print(f'DONE. Data stored in {out_file}')
