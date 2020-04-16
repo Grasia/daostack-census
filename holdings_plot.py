@@ -12,19 +12,39 @@ if __name__ == '__main__':
 
     # holdings stacked bar
     fig = go.Figure(data=[
-        go.Bar(name='ETH (USD)', x=df['name'], y=df['ETH']),
-        go.Bar(name='GEN (USD)', x=df['name'], y=df['GEN']),
-        go.Bar(name='Other criptos (USD)', x=df['name'], y=df['otherTokens'])
+        go.Bar(name='GEN', x=df['name'], y=df['GEN'], ),
+        go.Bar(name='ETH', x=df['name'], y=df['ETH']),
+        go.Bar(name='Other criptos', x=df['name'], y=df['otherTokens'])
     ])
 
-    # Change the bar mode
-    fig.update_layout(barmode='stack')
+    # Change layout
+    fig.update_layout(
+        barmode='stack',
+        yaxis= {'ticksuffix': '$'},
+        legend=dict(
+            x=0.01,
+            y=0.98,
+            traceorder="normal",
+            font=dict(
+                family="sans-serif",
+                size=12,
+                color="black"
+            ),
+            bordercolor="Black",
+            borderwidth=1
+    ))
+
     fig.show()
 
+    # Show stats
     eth = sum(df['ETH'].tolist())
     gen = sum(df['GEN'].tolist())
     others = sum(df['otherTokens'].tolist())
     total = eth + gen + others
 
-    print(f'Stats: \n  ETH = {round(eth/total*100, 2)}%\n  GEN = \
-{round(gen/total*100, 2)}%\n  Others = {round(others/total*100, 2)}%')
+    print(
+        'Stats: \n' +
+        f'Total funds = {round(total, 2)}$\n' +
+        f'ETH = {round(eth, 2)}$ ~> {round(eth/total*100, 2)}%\n' +  
+        f'GEN = {round(gen, 2)}$ ~> {round(gen/total*100, 2)}%\n' +
+        f'Other criptos = {round(others, 2)} ~> {round(others/total*100, 2)}%')
