@@ -6,11 +6,14 @@ if __name__ == '__main__':
     filename: str = os.path.join('datawarehouse', 'census.csv')
     df: pd.DataFrame = pd.read_csv(filename, header=0)
 
-    # calculate total holdings
-    df['holdings'] = df['ETH'] + df['GEN'] + df['otherTokens']
-    df = df.sort_values(by=['holdings'])
+    # calculate total budget
+    df['budget'] = df['ETH'] + df['GEN'] + df['otherTokens']
+    df = df.sort_values(by=['budget'])
 
-    # holdings stacked bar
+    # filter DAOs up to 1$
+    df = df[df['budget'] >= 1]
+
+    # budget stacked bar
     fig = go.Figure(data=[
         go.Bar(name='GEN', x=df['name'], y=df['GEN'], ),
         go.Bar(name='ETH', x=df['name'], y=df['ETH']),
