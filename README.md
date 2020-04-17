@@ -7,7 +7,9 @@ Requirements:
 * tkinter
 
 Install all python dependencies with:
+
 `pip install -r requirements.txt`
 
 For ploting you need tkinter, so, if you are in Ubuntu install it with:
+
 `sudo apt-get install python3-tk`
