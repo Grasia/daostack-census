@@ -22,14 +22,14 @@ def update_layout(df: pd.DataFrame, fig: go.Figure, title: str) -> None:
     )
 
 
-def plot(df: pd.DataFrame, title: str) -> None:
+def plot(df: pd.DataFrame, y_key: str, title: str) -> None:
     colors: list = [LIGHT_BLUE] * len(df.index)
     colors[-1] = DARK_BLUE
 
     fig = go.Figure(data=[
         go.Bar(
             x=df['date'], 
-            y=df['actives'],
+            y=df[y_key],
             marker_color=colors)
     ])
 
@@ -55,16 +55,21 @@ if __name__ == '__main__':
     # let's transform the date
     df['unixDate'] = pd.to_datetime(df['unixDate'], unit='s').dt.date
     df = df.rename(columns={'unixDate': 'date'})
-
     # transform to monthly date
     df['date'] = df['date'].apply(lambda d: d.replace(day=1))
 
     # active DAOs
     dff = df.drop(columns=['daoName', 'actionType', 'userId'])
     dff = process_df(dff, 'daoId')
-    plot(dff, 'Number of active DAOs')
+    plot(dff, 'actives','Number of active DAOs')
 
     # active users
     dff = df.drop(columns=['daoName', 'daoId', 'actionType'])
     dff = process_df(dff, 'userId')
-    plot(dff, 'Number of active users')
+    plot(dff, 'actives', 'Number of active users')
+
+    # new proposals
+    dff = df[df['actionType'] == 'proposal']
+    dff = dff.drop(columns=['daoName', 'daoId', 'actionType', 'userId'])
+    dff = dff.groupby(['date']).size().reset_index(name='n_proposals')
+    plot(dff, 'n_proposals', 'Number of new proposals')
