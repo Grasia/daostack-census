@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 DATE_FORMAT: str = '%b, %Y'
 DARK_BLUE: str = '#2471a3'
 LIGHT_BLUE: str = '#d4e6f1'
+GRID_COLOR: str = '#B0BEC5'
 
 
 def update_layout(df: pd.DataFrame, fig: go.Figure) -> None:
@@ -24,7 +25,7 @@ def update_layout(df: pd.DataFrame, fig: go.Figure) -> None:
         yaxis={
             'showgrid': True,
             'gridwidth': 0.5,
-            'gridcolor': '#B0BEC5',
+            'gridcolor': GRID_COLOR,
             'ticks': 'outside',
             'ticklen': 5,
             'tickwidth': 2,
