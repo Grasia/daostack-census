@@ -7,7 +7,7 @@ DARK_BLUE: str = '#2471a3'
 LIGHT_BLUE: str = '#d4e6f1'
 
 
-def update_layout(df: pd.DataFrame, fig: go.Figure, title: str) -> None:
+def update_layout(df: pd.DataFrame, fig: go.Figure) -> None:
     fig.update_layout(
         xaxis={
             'tickvals': df['date'],
@@ -16,13 +16,15 @@ def update_layout(df: pd.DataFrame, fig: go.Figure, title: str) -> None:
             'type': 'date',
         },
         yaxis={
-            'title': title,
+            'showgrid': True,
+            'gridwidth': 0.5,
+            'gridcolor': '#B0BEC5',
         },
         plot_bgcolor="white",
     )
 
 
-def plot(df: pd.DataFrame, y_key: str, title: str) -> None:
+def plot(df: pd.DataFrame, y_key: str) -> None:
     colors: list = [LIGHT_BLUE] * len(df.index)
     colors[-1] = DARK_BLUE
 
@@ -33,7 +35,7 @@ def plot(df: pd.DataFrame, y_key: str, title: str) -> None:
             marker_color=colors)
     ])
 
-    update_layout(df, fig, title)
+    update_layout(df, fig)
     fig.show()
 
 
@@ -61,15 +63,15 @@ if __name__ == '__main__':
     # active DAOs
     dff = df.drop(columns=['daoName', 'actionType', 'userId'])
     dff = process_df(dff, 'daoId')
-    plot(dff, 'actives','Number of active DAOs')
+    plot(dff, 'actives')
 
     # active users
     dff = df.drop(columns=['daoName', 'daoId', 'actionType'])
     dff = process_df(dff, 'userId')
-    plot(dff, 'actives', 'Number of active users')
+    plot(dff, 'actives')
 
     # new proposals
     dff = df[df['actionType'] == 'proposal']
     dff = dff.drop(columns=['daoName', 'daoId', 'actionType', 'userId'])
     dff = dff.groupby(['date']).size().reset_index(name='n_proposals')
-    plot(dff, 'n_proposals', 'Number of new proposals')
+    plot(dff, 'n_proposals')
