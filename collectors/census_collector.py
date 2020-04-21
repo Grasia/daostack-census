@@ -1,15 +1,18 @@
 import os
 import pandas as pd
-from typing import Dict, List
+from typing import Dict, List, Set
 from datetime import datetime
 from requester import n_requests
 
-daos_ids: List[str] = list()
+daos_ids: Set[str] = set()
 
 
 # queries
 DAO_QUERY: str = '{{daos(where: {{register: "registered"}}, first: {0}, skip: {1}\
 ){{id name reputationHoldersCount}}}}'
+
+EVENT_QUERY: str = '{{events(where: {{type: "NewDAO"}}, first: {0}, skip: {1}\
+){{timestamp dao{{id}}}}}}'
 
 PROPOSAL_QUERY: str = '{{proposals(where: {{dao: "{0}"}}, first: {1}, skip: {2}\
 ){{id}}}}'
@@ -36,9 +39,28 @@ def get_daos() -> pd.DataFrame:
     dff = dff.rename(columns={"reputationHoldersCount": "n_users"})
 
     global daos_ids
-    daos_ids = dff['id'].tolist()
+    daos_ids = set(dff['id'].tolist())
 
     return dff
+
+
+def get_daos_birth() -> pd.DataFrame:
+    print("Requesting DAOs birth ...")
+    start: datetime = datetime.now()
+
+    events: List[Dict] = n_requests(query=EVENT_QUERY, result_key='events')
+
+    print(f'DAOs birth requested in {round((datetime.now() - start).total_seconds(), 2)}s')
+
+    daos: List[Dict] = list()
+    for e in events:
+        if e['dao']['id'] in daos_ids:
+            daos.append({
+                'id': e['dao']['id'],
+                'birth': e['timestamp']
+            })
+
+    return pd.DataFrame(daos)
 
 
 def get_proposals() -> pd.DataFrame:
@@ -117,17 +139,24 @@ def get_stakes() -> pd.DataFrame:
 
 
 if __name__ == '__main__':
-    df1: pd.DataFrame = get_daos()
-    df2: pd.DataFrame = get_proposals()
-    df3: pd.DataFrame = get_votes()
-    df4: pd.DataFrame = get_stakes()
+    df: pd.DataFrame = get_daos()
+    df2: pd.DataFrame = get_daos_birth()
+    df3: pd.DataFrame = get_proposals()
+    df4: pd.DataFrame = get_votes()
+    df5: pd.DataFrame = get_stakes()
 
-    df1['n_proposals'] = df2['n_proposals'].tolist()
-    df1['n_votes'] = df3['n_votes'].tolist()
-    df1['n_stakes'] = df4['n_stakes'].tolist()
-    df1['ETH'] = 0.0
-    df1['GEN'] = 0.0
-    df1['otherTokens'] = 0.0
+    df['birth'] = 0
+    df['n_proposals'] = df3['n_proposals'].tolist()
+    df['n_votes'] = df4['n_votes'].tolist()
+    df['n_stakes'] = df5['n_stakes'].tolist()
+    df['ETH'] = 0.0
+    df['GEN'] = 0.0
+    df['otherTokens'] = 0.0
+
+    # add DAOs birth
+    for i, row in df.iterrows():
+        r = df2[df2['id'] == row['id']]
+        df.loc[i, 'birth'] = r.iloc[0]['birth']
 
     # load holdings
     filename: str = ''
@@ -136,16 +165,16 @@ if __name__ == '__main__':
             if 'dao_holdings' in file:
                 filename = os.path.join(dirpath, file)  
 
-    df5: pd.DataFrame = pd.read_csv(filename, header=0)
+    df6: pd.DataFrame = pd.read_csv(filename, header=0)
 
     # add holdings by id
-    for i, row in df1.iterrows():
-        r = df5[df5['id'] == row['id']]
-        df1.loc[i, 'ETH'] = r.iloc[0]['ETH']
-        df1.loc[i, 'GEN'] = r.iloc[0]['GEN']
-        df1.loc[i, 'otherTokens'] = r.iloc[0]['otherTokens']
+    for i, row in df.iterrows():
+        r = df6[df6['id'] == row['id']]
+        df.loc[i, 'ETH'] = r.iloc[0]['ETH']
+        df.loc[i, 'GEN'] = r.iloc[0]['GEN']
+        df.loc[i, 'otherTokens'] = r.iloc[0]['otherTokens']
 
 
     out_file: str = os.path.join('datawarehouse', 'census.csv')
-    df1.to_csv(out_file, index=False)
+    df.to_csv(out_file, index=False)
     print(f'DONE. Data stored in {out_file}')
