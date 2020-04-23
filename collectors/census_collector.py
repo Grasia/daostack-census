@@ -67,7 +67,7 @@ def get_proposals() -> pd.DataFrame:
     """
     Gets a dataframe with DAOs id and them number of proposals
     """
-    df: pd.DataFrame = pd.DataFrame(columns=['id', 'n_proposals'])
+    df: pd.DataFrame = pd.DataFrame(columns=['id', 'nProposals'])
     print("Requesting proposals ...")
     start: datetime = datetime.now()
 
@@ -78,9 +78,9 @@ def get_proposals() -> pd.DataFrame:
         dff: pd.DataFrame = pd.DataFrame(proposals)
         dff = dff.rename(columns={"id": "pId"})
         dff['id'] = d_id
-        dff = dff.groupby('id').size().reset_index(name='n_proposals')
+        dff = dff.groupby('id').size().reset_index(name='nProposals')
         if len(proposals) == 0:
-            dff = {'id': d_id, 'n_proposals': 0}
+            dff = {'id': d_id, 'nProposals': 0}
 
         df = df.append(dff, ignore_index=True)
 
@@ -92,7 +92,7 @@ def get_votes() -> pd.DataFrame:
     """
     Gets a dataframe with DAOs ids and them number of votes
     """
-    df: pd.DataFrame = pd.DataFrame(columns=['id', 'n_votes'])
+    df: pd.DataFrame = pd.DataFrame(columns=['id', 'nVotes'])
     print("Requesting votes ...")
     start: datetime = datetime.now()
 
@@ -103,9 +103,9 @@ def get_votes() -> pd.DataFrame:
         dff: pd.DataFrame = pd.DataFrame(votes)
         dff = dff.rename(columns={"id": "vId"})
         dff['id'] = d_id
-        dff = dff.groupby('id').size().reset_index(name='n_votes')
+        dff = dff.groupby('id').size().reset_index(name='nVotes')
         if len(votes) == 0:
-            dff = {'id': d_id, 'n_votes': 0}
+            dff = {'id': d_id, 'nVotes': 0}
 
         df = df.append(dff, ignore_index=True)
 
@@ -117,7 +117,7 @@ def get_stakes() -> pd.DataFrame:
     """
     Gets a dataframe with DAOs ids and them number of stakes
     """
-    df: pd.DataFrame = pd.DataFrame(columns=['id', 'n_stakes'])
+    df: pd.DataFrame = pd.DataFrame(columns=['id', 'nStakes'])
     print("Requesting stakes ...")
     start: datetime = datetime.now()
 
@@ -128,9 +128,9 @@ def get_stakes() -> pd.DataFrame:
         dff: pd.DataFrame = pd.DataFrame(stakes)
         dff = dff.rename(columns={"id": "sId"})
         dff['id'] = d_id
-        dff = dff.groupby('id').size().reset_index(name='n_stakes')
+        dff = dff.groupby('id').size().reset_index(name='nStakes')
         if len(stakes) == 0:
-            dff = {'id': d_id, 'n_stakes': 0}
+            dff = {'id': d_id, 'nStakes': 0}
 
         df = df.append(dff, ignore_index=True)
 
@@ -138,26 +138,26 @@ def get_stakes() -> pd.DataFrame:
     return df
 
 
-if __name__ == '__main__':
-    df: pd.DataFrame = get_daos()
-    df2: pd.DataFrame = get_daos_birth()
-    df3: pd.DataFrame = get_proposals()
-    df4: pd.DataFrame = get_votes()
-    df5: pd.DataFrame = get_stakes()
+def join_df_by_id(df1: pd.DataFrame, df2: pd.DataFrame, keys: List[str])\
+-> pd.DataFrame:
 
-    df['birth'] = 0
-    df['n_proposals'] = df3['n_proposals'].tolist()
-    df['n_votes'] = df4['n_votes'].tolist()
-    df['n_stakes'] = df5['n_stakes'].tolist()
-    df['ETH'] = 0.0
-    df['GEN'] = 0.0
-    df['otherTokens'] = 0.0
+    df: pd.DataFrame = df1
+    # initialization
+    for k in keys:
+        df[k] = None
 
-    # add DAOs birth
     for i, row in df.iterrows():
-        r = df2[df2['id'] == row['id']]
-        df.loc[i, 'birth'] = r.iloc[0]['birth']
+        try:
+            r = df2[df2['id'] == row['id']]
+            for k in keys:
+                df.loc[i, k] = r.iloc[0][k]
+        except:
+            print(f'Error with {row["name"]}')
 
+    return df
+
+
+if __name__ == '__main__':
     # load holdings
     filename: str = ''
     for (dirpath, dirnames, filenames) in os.walk('datawarehouse'):
@@ -165,15 +165,18 @@ if __name__ == '__main__':
             if 'dao_holdings' in file:
                 filename = os.path.join(dirpath, file)  
 
+    df: pd.DataFrame = get_daos()
+    df2: pd.DataFrame = get_daos_birth()
+    df3: pd.DataFrame = get_proposals()
+    df4: pd.DataFrame = get_votes()
+    df5: pd.DataFrame = get_stakes()
     df6: pd.DataFrame = pd.read_csv(filename, header=0)
 
-    # add holdings by id
-    for i, row in df.iterrows():
-        r = df6[df6['id'] == row['id']]
-        df.loc[i, 'ETH'] = r.iloc[0]['ETH']
-        df.loc[i, 'GEN'] = r.iloc[0]['GEN']
-        df.loc[i, 'otherTokens'] = r.iloc[0]['otherTokens']
-
+    df = join_df_by_id(df1=df, df2=df2, keys=['birth'])
+    df = join_df_by_id(df1=df, df2=df3, keys=['nProposals'])
+    df = join_df_by_id(df1=df, df2=df4, keys=['nVotes'])
+    df = join_df_by_id(df1=df, df2=df5, keys=['nStakes'])
+    df = join_df_by_id(df1=df, df2=df6, keys=['ETH', 'GEN', 'otherTokens'])
 
     out_file: str = os.path.join('datawarehouse', 'census.csv')
     df.to_csv(out_file, index=False)

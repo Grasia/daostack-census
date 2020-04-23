@@ -39,25 +39,25 @@ if __name__ == '__main__':
     filename: str = os.path.join('datawarehouse', 'census.csv')
     df: pd.DataFrame = pd.read_csv(filename, header=0)
 
-    # users
-    fig = go.Figure(data=[go.Histogram(
-        x=df['n_users'].tolist(), 
-        xbins={'size': 10.0},
-        marker_color=BLUE,
-        )])
+    # # users
+    # fig = go.Figure(data=[go.Histogram(
+    #     x=df['n_users'].tolist(), 
+    #     xbins={'size': 10.0},
+    #     marker_color=BLUE,
+    #     )])
 
-    update_layout(fig=fig)
-    fig.show()
+    # update_layout(fig=fig)
+    # fig.show()
 
-    # proposals
-    fig = go.Figure(data=[go.Histogram(
-        x=df['n_proposals'].tolist(), 
-        xbins={'size': 10.0},
-        marker_color=BLUE,
-        )])
+    # # proposals
+    # fig = go.Figure(data=[go.Histogram(
+    #     x=df['n_proposals'].tolist(), 
+    #     xbins={'size': 10.0},
+    #     marker_color=BLUE,
+    #     )])
 
-    update_layout(fig=fig)
-    fig.show()
+    # update_layout(fig=fig)
+    # fig.show()
 
     # votes
     fig = go.Figure(data=[go.Histogram(
