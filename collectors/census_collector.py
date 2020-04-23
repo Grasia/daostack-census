@@ -36,7 +36,7 @@ def get_daos() -> pd.DataFrame:
     print(f'DAOs requested in {(datetime.now() - start).total_seconds():.2}s')
 
     dff: pd.DataFrame = pd.DataFrame(daos)
-    dff = dff.rename(columns={"reputationHoldersCount": "n_users"})
+    dff = dff.rename(columns={"reputationHoldersCount": "nUsers"})
 
     global daos_ids
     daos_ids = set(dff['id'].tolist())

@@ -18,8 +18,8 @@ if __name__ == '__main__':
 
     # users vs proposals
     j = sns.jointplot(
-        x=df["n_users"], 
-        y=df["n_proposals"], 
+        x=df["nUsers"], 
+        y=df["nProposals"], 
         kind='scatter', 
         s=100, 
         color=PLOT_COLOR, 
@@ -31,8 +31,8 @@ if __name__ == '__main__':
 
     # users vs votes
     j = sns.jointplot(
-        x=df["n_users"], 
-        y=df["n_votes"], 
+        x=df["nUsers"], 
+        y=df["nVotes"], 
         kind='scatter', 
         s=100, 
         color=PLOT_COLOR, 
@@ -44,8 +44,8 @@ if __name__ == '__main__':
 
     # users vs stakes
     j = sns.jointplot(
-        x=df["n_users"], 
-        y=df["n_stakes"], 
+        x=df["nUsers"], 
+        y=df["nStakes"], 
         kind='scatter', 
         s=100, 
         color=PLOT_COLOR, 
@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
     # users vs holdings
     j = sns.jointplot(
-    x=df["n_users"], 
+    x=df["nUsers"], 
     y=df["holdings"], 
     kind='scatter', 
     s=100, 

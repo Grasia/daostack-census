@@ -49,9 +49,19 @@ if __name__ == '__main__':
     # update_layout(fig=fig)
     # fig.show()
 
-    # # proposals
+    # proposals
+    fig = go.Figure(data=[go.Histogram(
+        x=df['n_proposals'].tolist(), 
+        xbins={'size': 10.0},
+        marker_color=BLUE,
+        )])
+
+    update_layout(fig=fig)
+    fig.show()
+
+    # # votes
     # fig = go.Figure(data=[go.Histogram(
-    #     x=df['n_proposals'].tolist(), 
+    #     x=df['n_votes'].tolist(), 
     #     xbins={'size': 10.0},
     #     marker_color=BLUE,
     #     )])
@@ -59,22 +69,12 @@ if __name__ == '__main__':
     # update_layout(fig=fig)
     # fig.show()
 
-    # votes
-    fig = go.Figure(data=[go.Histogram(
-        x=df['n_votes'].tolist(), 
-        xbins={'size': 10.0},
-        marker_color=BLUE,
-        )])
+    # # stakes
+    # fig = go.Figure(data=[go.Histogram(
+    #     x=df['n_stakes'].tolist(), 
+    #     xbins={'size': 10.0},
+    #     marker_color=BLUE,
+    #     )])
 
-    update_layout(fig=fig)
-    fig.show()
-
-    # stakes
-    fig = go.Figure(data=[go.Histogram(
-        x=df['n_stakes'].tolist(), 
-        xbins={'size': 10.0},
-        marker_color=BLUE,
-        )])
-
-    update_layout(fig=fig)
-    fig.show()
+    # update_layout(fig=fig)
+    # fig.show()

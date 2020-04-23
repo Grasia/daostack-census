@@ -31,7 +31,7 @@ if __name__ == '__main__':
     daos = transform_to_monthly_date(daos)
 
     # remove unused cols
-    daos = daos.drop(columns=['n_users', 'n_proposals', 'n_votes', 'n_stakes',
+    daos = daos.drop(columns=['nUsers', 'nProposals', 'nVotes', 'nStakes',
         'ETH', 'GEN', 'otherTokens'])
 
     # let's add month between now date and DAO's birth date

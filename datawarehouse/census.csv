@@ -1,4 +1,4 @@
-id,name,n_users,birth,nProposals,nVotes,nStakes,ETH,GEN,otherTokens
+id,name,nUsers,birth,nProposals,nVotes,nStakes,ETH,GEN,otherTokens
 0x0b93ba560283350d4216f29dc57e15df38d0eace,CuraDAO,44,1562509769,23,67,31,1065.22,39.11,634.06
 0x294f999356ed03347c7a23bcbcf8d33fa41dc830,Genesis Alpha,266,1554713319,379,2194,1075,120.46,0.12,84.65
 0x2b8c70fffda7f3d7667f7cfede1429313886329c,ETHGlobal,48,1573036176,19,74,49,0.14,0.03,0.0

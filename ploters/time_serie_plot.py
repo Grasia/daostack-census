@@ -86,5 +86,5 @@ if __name__ == '__main__':
     # new proposals
     dff = df[df['actionType'] == 'proposal']
     dff = dff.drop(columns=['daoName', 'daoId', 'actionType', 'userId'])
-    dff = dff.groupby(['date']).size().reset_index(name='n_proposals')
-    plot(dff, 'n_proposals')
+    dff = dff.groupby(['date']).size().reset_index(name='nProposals')
+    plot(dff, 'nProposals')
