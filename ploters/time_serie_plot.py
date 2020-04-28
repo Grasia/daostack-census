@@ -38,14 +38,17 @@ def update_layout(df: pd.DataFrame, fig: go.Figure) -> None:
 
 
 def plot(df: pd.DataFrame, y_key: str) -> None:
-    colors: list = [LIGHT_BLUE] * len(df.index)
-    colors[-1] = DARK_BLUE
+    colors: list = [DARK_BLUE] * len(df.index)
+    colors[-1] = LIGHT_BLUE
 
     fig = go.Figure(data=[
-        go.Bar(
+        go.Scatter(
             x=df['date'], 
             y=df[y_key],
-            marker_color=colors)
+            marker_color=colors,
+            marker_size=12,
+            marker_line_width=2,
+            line_color=DARK_BLUE)
     ])
 
     update_layout(df, fig)
