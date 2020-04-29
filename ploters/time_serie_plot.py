@@ -79,11 +79,15 @@ if __name__ == '__main__':
     # active DAOs
     dff = df.drop(columns=['daoName', 'actionType', 'userId'])
     dff = process_df(dff, 'daoId')
+    print(f'Mean active DAOs = {sum(dff["actives"].tolist()) / len(dff["actives"].tolist())}')
     plot(dff, 'actives')
 
     # active users
-    dff = df.drop(columns=['daoName', 'daoId', 'actionType'])
+    dff = df
+    dff = dff[dff['daoId'] == '0x294f999356ed03347c7a23bcbcf8d33fa41dc830']
+    dff = dff.drop(columns=['daoName', 'daoId', 'actionType'])
     dff = process_df(dff, 'userId')
+    print(f'Mean active users = {sum(dff["actives"].tolist()) / len(dff["actives"].tolist())}')
     plot(dff, 'actives')
 
     # new proposals
@@ -94,7 +98,8 @@ if __name__ == '__main__':
     plot(dff, 'nProposals')
 
     # total actions
-    # dff = df[df['daoId'] == '0x294f999356ed03347c7a23bcbcf8d33fa41dc830']
+    dff = df
+    # dff = dff[dff['daoId'] == '0x294f999356ed03347c7a23bcbcf8d33fa41dc830']
     dff = dff.drop(columns=['daoName', 'daoId', 'actionType', 'userId'])
     dff = dff.groupby(['date']).size().reset_index(name='actions')
     print(f'Total actions = {sum(dff["actions"].tolist())}')
