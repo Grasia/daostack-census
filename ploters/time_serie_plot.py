@@ -90,4 +90,12 @@ if __name__ == '__main__':
     dff = df[df['actionType'] == 'proposal']
     dff = dff.drop(columns=['daoName', 'daoId', 'actionType', 'userId'])
     dff = dff.groupby(['date']).size().reset_index(name='nProposals')
+    print(f'Total proposals = {sum(dff["nProposals"].tolist())}')
     plot(dff, 'nProposals')
+
+    # total actions
+    # dff = df[df['daoId'] == '0x294f999356ed03347c7a23bcbcf8d33fa41dc830']
+    dff = dff.drop(columns=['daoName', 'daoId', 'actionType', 'userId'])
+    dff = dff.groupby(['date']).size().reset_index(name='actions')
+    print(f'Total actions = {sum(dff["actions"].tolist())}')
+    plot(dff, 'actions')
