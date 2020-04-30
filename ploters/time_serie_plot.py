@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
     # active users
     dff = df
-    dff = dff[dff['daoId'] == '0x294f999356ed03347c7a23bcbcf8d33fa41dc830']
+    #dff = dff[dff['daoId'] == '0x294f999356ed03347c7a23bcbcf8d33fa41dc830']
     dff = dff.drop(columns=['daoName', 'daoId', 'actionType'])
     dff = process_df(dff, 'userId')
     print(f'Mean active users = {sum(dff["actives"].tolist()) / len(dff["actives"].tolist())}')
