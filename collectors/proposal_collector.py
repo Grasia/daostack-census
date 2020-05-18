@@ -50,7 +50,7 @@ def get_proposals(daos: pd.DataFrame) -> pd.DataFrame:
 if __name__ == '__main__':
     daos: pd.DataFrame = get_daos_id()
     df: pd.DataFrame = get_proposals(daos)
-    //df = df[df['createdAt'] <= 1587596397]
+    #df = df[df['createdAt'] <= 1587596397]
 
     # column reorder
     df = df[[
