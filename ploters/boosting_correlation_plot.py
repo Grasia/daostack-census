@@ -5,6 +5,7 @@ import pandas as pd
 from scipy import stats
 import plotly.graph_objects as go
 from typing import List
+import math
 
 PLOT_COLOR: str = '#03A9F4'
 
@@ -62,6 +63,7 @@ if __name__ == '__main__':
     df['boostPercentage'] = None
 
     for i, row in df.iterrows():
+        #df.loc[i, 'nUsers'] = math.log1p(row['nUsers'])
         if row['nProposals'] > 0:
             df.loc[i, 'boostPercentage'] = row['nBoost'] / row['nProposals'] * 100
 
@@ -69,12 +71,13 @@ if __name__ == '__main__':
     # df = df[df['daoName'] != 'Kyber DAO Exp#2']
     # df = df[df['daoName'] != 'Genesis Alpha']
     # df = df[df['daoName'] != 'dxDAO']
+
     
     sns.set(style="white", color_codes=True)
     # users vs boostPercentage
     j = sns.jointplot(
-        x=df["boostPercentage"], 
-        y=df["nUsers"], 
+        x=df["nUsers"], 
+        y=df["boostPercentage"], 
         kind='scatter', 
         s=100, 
         color=PLOT_COLOR, 
