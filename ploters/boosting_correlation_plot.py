@@ -7,6 +7,8 @@ import plotly.graph_objects as go
 from typing import List
 import math
 
+from activity_plot import calculate_month_activity
+
 PLOT_COLOR: str = '#03A9F4'
 
 
@@ -41,7 +43,7 @@ def join_df_by_id(df1: pd.DataFrame, df2: pd.DataFrame, keys: List[str])\
     return df
 
 
-if __name__ == '__main__':
+def calculate_boost_data() -> pd.DataFrame:
     # load daos stats
     filename: str = os.path.join('datawarehouse', 'census.csv')
     daos: pd.DataFrame = pd.read_csv(filename, header=0)
@@ -54,7 +56,7 @@ if __name__ == '__main__':
     # add some stats
     df = props.groupby(['id', 'daoName']).size().reset_index(name='nProposals')
     df = fill_ids(df, daos)
-    df = join_df_by_id(df1=df, df2=daos, keys=['nUsers'])
+    df = join_df_by_id(df1=df, df2=daos, keys=['nUsers', 'nVotes', 'nStakes'])
 
     # add boost stats
     dff = props[props['boostedAt'].notnull()]
@@ -62,21 +64,50 @@ if __name__ == '__main__':
     df = join_df_by_id(df1=df, df2=dff, keys=['nBoost'])
     df['boostPercentage'] = None
 
+    # activity = stakes + votes + proposals
+    df['activity'] = 0
+
+    # calculate new metrics
     for i, row in df.iterrows():
-        #df.loc[i, 'nUsers'] = math.log1p(row['nUsers'])
+        df.loc[i, 'activity'] = row['nStakes'] + row['nVotes'] + row['nProposals'] 
         if row['nProposals'] > 0:
             df.loc[i, 'boostPercentage'] = row['nBoost'] / row['nProposals'] * 100
 
-    # # filter daos
+    return df
+
+
+def calculate_activity_ratio(df: pd.DataFrame) -> pd.DataFrame:
+    if not 'activityMonths' in df.columns and 'monthLife' in df.columns:
+        return df
+
+    dff: pd.DataFrame = df
+    dff['activityPercentage'] = 0
+
+    for i, row in dff.iterrows():
+        if row['monthLife'] > 0:
+            dff.loc[i, 'activityPercentage'] = row['activityMonths'] / row['monthLife'] * 100
+
+    return dff
+
+
+if __name__ == '__main__':
+    df: pd.DataFrame = calculate_boost_data()
+    df1: pd.DataFrame = calculate_month_activity()
+
+    df = join_df_by_id(df1=df, df2=df1, keys=['activityMonths', 'monthLife'])
+    df = calculate_activity_ratio(df)
+
+    # filters
     # df = df[df['daoName'] != 'Kyber DAO Exp#2']
     # df = df[df['daoName'] != 'Genesis Alpha']
     # df = df[df['daoName'] != 'dxDAO']
-
+    # df = df[df['activityPercentage'] > 50]
+    print(df)
     
     sns.set(style="white", color_codes=True)
     # users vs boostPercentage
     j = sns.jointplot(
-        x=df["nUsers"], 
+        x=df["activityPercentage"], 
         y=df["boostPercentage"], 
         kind='scatter', 
         s=100, 

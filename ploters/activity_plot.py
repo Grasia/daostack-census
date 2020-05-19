@@ -20,7 +20,7 @@ def get_months_between(date1: datetime, date2: datetime) -> int:
     return (end.year - start.year) * 12 + (end.month - start.month) + 1
 
 
-if __name__ == '__main__':
+def calculate_month_activity() -> pd.DataFrame:
     # get now date
     now_date = datetime.now().replace(day=1)
 
@@ -60,6 +60,11 @@ if __name__ == '__main__':
         if not r.empty:
             daos.loc[i, 'activityMonths'] = r.iloc[0]['activityMonths']
 
+    return daos
+
+
+if __name__ == '__main__':
+    daos = calculate_month_activity()
     # sort by activityMonths
     daos = daos.sort_values(by=['activityMonths'])
 
