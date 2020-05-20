@@ -58,6 +58,10 @@ def calculate_boost_data() -> pd.DataFrame:
     df = fill_ids(df, daos)
     df = join_df_by_id(df1=df, df2=daos, keys=['nUsers', 'nVotes', 'nStakes'])
 
+    # add diferent stakers
+    dff = props.groupby(['id']).sum().reset_index()
+    df = join_df_by_id(df1=df, df2=dff, keys=['differentStakers'])
+
     # add boost stats
     dff = props[props['boostedAt'].notnull()]
     dff = dff.groupby(['id']).size().reset_index(name='nBoost')
