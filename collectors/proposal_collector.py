@@ -8,7 +8,8 @@ DAO_QUERY: str = '{{daos(where: {{register: "registered"}}, first: {0}, skip: {1
 ){{id name}}}}'
 
 PROPOSAL_QUERY: str = '{{proposals(where: {{dao: "{0}", executedAt_not: null}}, first: {1}, skip: {2}\
-){{id createdAt boostedAt totalRepWhenExecuted votesFor votesAgainst stakesFor stakesAgainst winningOutcome}}}}'
+){{id createdAt boostedAt totalRepWhenExecuted votesFor votesAgainst stakesFor stakesAgainst winningOutcome \
+stakes{{staker}}}}}}'
 
 
 def get_daos_id() -> pd.DataFrame:
@@ -32,6 +33,11 @@ def get_proposals(daos: pd.DataFrame) -> pd.DataFrame:
         proposals: List[Dict] = n_requests(query=PROPOSAL_QUERY, 
             result_key='proposals', dao_id=row['id'])
 
+        # calculate diferent stakers
+        for p in proposals:
+            p['differentStakers'] = len(set([x['staker'] for x in p['stakes']]))
+            del p['stakes']
+
         dff: pd.DataFrame = pd.DataFrame(proposals)
         dff = dff.rename(columns={'id': 'proposalId', 'winningOutcome': 'hasPassed'})
         dff['daoId'] = row['id']
@@ -43,6 +49,7 @@ def get_proposals(daos: pd.DataFrame) -> pd.DataFrame:
     # data transformation 
     df['hasPassed'] = df['hasPassed'].apply(lambda x: True if x == 'Pass' else False)
     df['createdAt'] = df['createdAt'].apply(lambda x: int(x))
+    df['differentStakers'] = df['differentStakers'].apply(lambda x: int(x))
 
     return df
 
@@ -50,7 +57,7 @@ def get_proposals(daos: pd.DataFrame) -> pd.DataFrame:
 if __name__ == '__main__':
     daos: pd.DataFrame = get_daos_id()
     df: pd.DataFrame = get_proposals(daos)
-    #df = df[df['createdAt'] <= 1587596397]
+    df = df[df['createdAt'] <= 1587596397]
 
     # column reorder
     df = df[[
@@ -64,7 +71,8 @@ if __name__ == '__main__':
         'hasPassed',
         'boostedAt',
         'stakesFor',
-        'stakesAgainst']]
+        'stakesAgainst',
+        'differentStakers']]
 
     out_file: str = os.path.join('datawarehouse', 'proposals.csv')
     df.to_csv(out_file, index=False)

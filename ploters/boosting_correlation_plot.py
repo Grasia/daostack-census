@@ -105,7 +105,6 @@ if __name__ == '__main__':
     print(df)
     
     sns.set(style="white", color_codes=True)
-    # users vs boostPercentage
     j = sns.jointplot(
         x=df["activityPercentage"], 
         y=df["boostPercentage"], 
@@ -116,6 +115,6 @@ if __name__ == '__main__':
         linewidth=0.7,
         alpha=0.5)
 
-    j.annotate(stats.pearsonr)
+    j.annotate(stats.spearmanr)
 
     plt.show()
