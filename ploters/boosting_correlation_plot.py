@@ -58,10 +58,6 @@ def calculate_boost_data() -> pd.DataFrame:
     df = fill_ids(df, daos)
     df = join_df_by_id(df1=df, df2=daos, keys=['nUsers', 'nVotes', 'nStakes'])
 
-    # add diferent stakers
-    dff = props.groupby(['id']).sum().reset_index()
-    df = join_df_by_id(df1=df, df2=dff, keys=['differentStakers'])
-
     # add boost stats
     dff = props[props['boostedAt'].notnull()]
     dff = dff.groupby(['id']).size().reset_index(name='nBoost')
@@ -105,13 +101,14 @@ if __name__ == '__main__':
     # df = df[df['daoName'] != 'Kyber DAO Exp#2']
     # df = df[df['daoName'] != 'Genesis Alpha']
     # df = df[df['daoName'] != 'dxDAO']
+    # df = df[df['daoName'] != 'necDAO']
     # df = df[df['activityPercentage'] > 50]
     print(df)
     
     sns.set(style="white", color_codes=True)
     j = sns.jointplot(
-        x=df["activityPercentage"], 
-        y=df["boostPercentage"], 
+        x=df["nProposals"], 
+        y=df["nStakes"], 
         kind='scatter', 
         s=100, 
         color=PLOT_COLOR, 
@@ -119,6 +116,7 @@ if __name__ == '__main__':
         linewidth=0.7,
         alpha=0.5)
 
+    # j.annotate(stats.pearsonr)
     j.annotate(stats.spearmanr)
 
     plt.show()
