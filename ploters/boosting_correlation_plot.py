@@ -58,11 +58,27 @@ def calculate_boost_data() -> pd.DataFrame:
     df = fill_ids(df, daos)
     df = join_df_by_id(df1=df, df2=daos, keys=['nUsers', 'nVotes', 'nStakes'])
 
+    # add proposal result
+    dff = props[props['hasPassed'] == True]
+    dff = dff.groupby(['id']).size().reset_index(name='nPropAccepted')
+    df = join_df_by_id(df1=df, df2=dff, keys=['nPropAccepted'])
+    dff = props[props['hasPassed'] == False]
+    dff = dff.groupby(['id']).size().reset_index(name='nPropRejected')
+    df = join_df_by_id(df1=df, df2=dff, keys=['nPropRejected'])
+    df['acceptedPercentage'] = None
+    df['rejectedPercentage'] = None
+
     # add boost stats
     dff = props[props['boostedAt'].notnull()]
     dff = dff.groupby(['id']).size().reset_index(name='nBoost')
     df = join_df_by_id(df1=df, df2=dff, keys=['nBoost'])
     df['boostPercentage'] = None
+
+    # stakePer = nStakes / nProposals * 100
+    dff = props[props['differentStakers'] > 0]
+    dff = dff.groupby(['id']).size().reset_index(name='nPropStaked')
+    df = join_df_by_id(df1=df, df2=dff, keys=['nPropStaked'])
+    df['stakePercentage'] = None
 
     # activity = stakes + votes + proposals
     df['activity'] = 0
@@ -72,6 +88,9 @@ def calculate_boost_data() -> pd.DataFrame:
         df.loc[i, 'activity'] = row['nStakes'] + row['nVotes'] + row['nProposals'] 
         if row['nProposals'] > 0:
             df.loc[i, 'boostPercentage'] = row['nBoost'] / row['nProposals'] * 100
+            df.loc[i, 'stakePercentage'] = row['nPropStaked'] / row['nProposals'] * 100
+            df.loc[i, 'acceptedPercentage'] = row['nPropAccepted'] / row['nProposals'] * 100
+            df.loc[i, 'rejectedPercentage'] = row['nPropRejected'] / row['nProposals'] * 100
 
     return df
 
@@ -103,12 +122,13 @@ if __name__ == '__main__':
     # df = df[df['daoName'] != 'dxDAO']
     # df = df[df['daoName'] != 'necDAO']
     # df = df[df['activityPercentage'] > 50]
-    print(df)
+    # print(df[['nUsers', 'nProposals', 'nBoost', 'nPropAccepted', 'nPropRejected']].corr(method='pearson'))
+    # print(df[['nUsers', 'nProposals', 'nBoost', 'nPropAccepted', 'nPropRejected']].corr(method='spearman'))
     
     sns.set(style="white", color_codes=True)
     j = sns.jointplot(
-        x=df["nProposals"], 
-        y=df["nStakes"], 
+        x=df["nPropAccepted"], 
+        y=df["nBoost"], 
         kind='scatter', 
         s=100, 
         color=PLOT_COLOR, 
