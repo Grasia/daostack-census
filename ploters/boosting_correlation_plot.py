@@ -3,9 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 from scipy import stats
-import plotly.graph_objects as go
 from typing import List
-import math
 
 from activity_plot import calculate_month_activity
 
