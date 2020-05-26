@@ -121,12 +121,14 @@ if __name__ == '__main__':
     # df = df[df['daoName'] != 'necDAO']
     # df = df[df['activityPercentage'] > 50]
     # print(df[['nUsers', 'nProposals', 'nBoost', 'nPropAccepted', 'nPropRejected']].corr(method='pearson'))
-    # print(df[['nUsers', 'nProposals', 'nBoost', 'nPropAccepted', 'nPropRejected']].corr(method='spearman'))
+    # print(df[['nUsers', 'nProposals', 'nPropAccepted', 'nPropRejected', 'nPropStaked', 'nBoost']].corr(method='spearman'))
     
+    df = df.rename(columns={'nProposals': 'Proposals', 'nBoost': 'Boosted proposals'})
+
     sns.set(style="white", color_codes=True)
     j = sns.jointplot(
-        x=df["nPropAccepted"], 
-        y=df["nBoost"], 
+        x=df["Proposals"], 
+        y=df["Boosted proposals"], 
         kind='scatter', 
         s=100, 
         color=PLOT_COLOR, 
@@ -135,6 +137,6 @@ if __name__ == '__main__':
         alpha=0.5)
 
     # j.annotate(stats.pearsonr)
-    j.annotate(stats.spearmanr)
+    # j.annotate(stats.spearmanr)
 
     plt.show()
