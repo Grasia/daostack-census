@@ -106,8 +106,7 @@ if __name__ == '__main__':
                 x=daos['name'], 
                 y=daos['monthLife'],
                 name='Birth months',
-                marker_color='black', 
-                marker_size=15,
+                marker_color='black',
                 mode='markers',
                 marker_symbol='x-thin-open')
         ])
@@ -137,9 +136,11 @@ if __name__ == '__main__':
             'linewidth': 2, 
             'linecolor': 'black',
             'tickfont': {'size': 14},
+            'tick0': 0,
+            'dtick': 2,
         },
         plot_bgcolor="white",
-        legend={'orientation': 'h', 'x': 0.4, 'y': 1.1}
+        legend={'orientation': 'h', 'x': 0, 'y': 1.2}
     )
 
     fig.show()
