@@ -139,7 +139,7 @@ if __name__ == '__main__':
             'tickfont': {'size': 14},
         },
         plot_bgcolor="white",
-        legend={'orientation': 'h', 'x': 0, 'y': 1.2}
+        legend={'orientation': 'h', 'x': 0.4, 'y': 1.1}
     )
 
     fig.show()
