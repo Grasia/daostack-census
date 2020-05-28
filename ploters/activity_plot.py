@@ -105,7 +105,7 @@ if __name__ == '__main__':
             go.Scatter(
                 x=daos['name'], 
                 y=daos['monthLife'],
-                name='Birth months',
+                name='Age months',
                 marker_color='black',
                 mode='markers',
                 marker_symbol='x-thin-open')
