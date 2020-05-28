@@ -2,8 +2,11 @@ import os
 import pandas as pd
 import plotly.graph_objects as go
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from typing import Set, List
 
 LIGHT_BLUE: str = '#d4e6f1'
+DARK_BLUE: str = '#2471a3'
 GRID_COLOR: str = '#B0BEC5'
 
 def transform_to_monthly_date(df: pd.DataFrame) -> pd.DataFrame:
@@ -18,6 +21,20 @@ def get_months_between(date1: datetime, date2: datetime) -> int:
     end: datetime = date1 if date1 > date2 else date2
 
     return (end.year - start.year) * 12 + (end.month - start.month) + 1
+
+
+def calculate_recent_activity(df: pd.DataFrame) -> Set[str]:
+    comp_date: datetime.date = datetime.today().date().replace(day=1)
+    comp_date = comp_date + relativedelta(months=-3)
+    actives: Set[str] = set()
+
+    ids: List[str] = df.groupby(['daoId']).size().reset_index()['daoId'].tolist()
+    for d_id in ids:
+        max_date = df[df['daoId'] == d_id]['date'].max()
+        if max_date >= comp_date:
+            actives.add(d_id)
+
+    return actives
 
 
 def calculate_month_activity() -> pd.DataFrame:
@@ -51,8 +68,15 @@ def calculate_month_activity() -> pd.DataFrame:
     # calculate activity months by DAO
     activity['date'] = activity['date'].dt.date
     activity = activity.groupby(['daoId', 'date']).size().reset_index()
+    active_daos: Set[str] = calculate_recent_activity(df=activity)
     activity = activity.groupby(['daoId']).size().reset_index(name='activityMonths')
-    
+
+    # add actives as color
+    daos['color'] = LIGHT_BLUE
+    for i, row in daos.iterrows():
+        if row['id'] in active_daos:
+            daos.loc[i, 'color'] = DARK_BLUE
+
     # add activity months to DAOs
     daos['activityMonths'] = 0
     for i, row in daos.iterrows():
@@ -60,6 +84,7 @@ def calculate_month_activity() -> pd.DataFrame:
         if not r.empty:
             daos.loc[i, 'activityMonths'] = r.iloc[0]['activityMonths']
 
+    print(daos)
     return daos
 
 
@@ -74,12 +99,12 @@ if __name__ == '__main__':
             go.Bar(
                 x=daos['name'], 
                 y=daos['activityMonths'], 
-                marker_color=LIGHT_BLUE,
-                name='Real month activity'),
+                marker_color=daos['color'],
+                name='Activity months'),
             go.Scatter(
                 x=daos['name'], 
                 y=daos['monthLife'],
-                name='Max months which can get activity',
+                name='Birth months',
                 marker_color='black', 
                 mode='markers',
                 marker_symbol='x-thin-open')
