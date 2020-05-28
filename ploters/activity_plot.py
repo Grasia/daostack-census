@@ -40,6 +40,7 @@ def calculate_recent_activity(df: pd.DataFrame) -> Set[str]:
 def calculate_month_activity() -> pd.DataFrame:
     # get now date
     now_date = datetime.now().replace(day=1)
+    # now_date = now_date + relativedelta(months=-1)
 
     # load DAOs data
     filename: str = os.path.join('datawarehouse', 'census.csv')
@@ -106,6 +107,7 @@ if __name__ == '__main__':
                 y=daos['monthLife'],
                 name='Birth months',
                 marker_color='black', 
+                marker_size=15,
                 mode='markers',
                 marker_symbol='x-thin-open')
         ])
