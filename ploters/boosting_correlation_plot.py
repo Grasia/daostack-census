@@ -115,7 +115,7 @@ if __name__ == '__main__':
     df = calculate_activity_ratio(df)
 
     # filters
-    # df = df[df['daoName'] != 'Kyber DAO Exp#2']
+    df = df[df['daoName'] != 'Kyber DAO Exp#2']
     # df = df[df['daoName'] != 'Genesis Alpha']
     # df = df[df['daoName'] != 'dxDAO']
     # df = df[df['daoName'] != 'necDAO']
@@ -123,12 +123,12 @@ if __name__ == '__main__':
     # print(df[['nUsers', 'nProposals', 'nBoost', 'nPropAccepted', 'nPropRejected']].corr(method='pearson'))
     # print(df[['nUsers', 'nProposals', 'nPropAccepted', 'nPropRejected', 'nPropStaked', 'nBoost']].corr(method='spearman'))
     
-    df = df.rename(columns={'nProposals': 'Proposals', 'nBoost': 'Boosted proposals'})
+    df = df.rename(columns={'nUsers': 'Users', 'stakePercentage': 'Staked proposals %'})
 
     sns.set(style="white", color_codes=True)
     j = sns.jointplot(
-        x=df["Proposals"], 
-        y=df["Boosted proposals"], 
+        x=df["Users"], 
+        y=df["Staked proposals %"], 
         kind='scatter', 
         s=100, 
         color=PLOT_COLOR, 
