@@ -13,7 +13,7 @@ PLOT_COLOR: str = '#03A9F4'
 def fill_ids(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
     df: pd.DataFrame = df1
 
-    for i, row in df2.iterrows():
+    for _, row in df2.iterrows():
         r = df[df['id'] == row['id']]
         if r.empty:
             serie: pd.Series = pd.Series([row['id'], row['name'], 0], index=df.columns)
