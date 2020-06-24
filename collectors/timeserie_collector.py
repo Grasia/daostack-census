@@ -3,6 +3,7 @@ import pandas as pd
 from typing import Dict, List
 from datetime import datetime
 from requester import n_requests
+import time
 
 DAO_QUERY: str = '{{daos(where: {{register: "registered"}}, first: {0}, skip: {1}\
 ){{id name}}}}'
@@ -35,15 +36,23 @@ def get_proposals(daos: pd.DataFrame) -> pd.DataFrame:
     start: datetime = datetime.now()
 
     for _, row in daos.iterrows():
-        proposals: List[Dict] = n_requests(query=PROPOSAL_QUERY, 
-            result_key='proposals', dao_id=row['id'])
+        try:
+            proposals: List[Dict] = n_requests(query=PROPOSAL_QUERY, 
+                result_key='proposals', dao_id=row['id'])
+        except Exception as e:
+            print(e)
+            time.sleep(45)
+            proposals: List[Dict] = n_requests(query=PROPOSAL_QUERY, 
+                result_key='proposals', dao_id=row['id'])
+            print('Recovered: resuming requests')
 
-        dff: pd.DataFrame = pd.DataFrame(proposals)
-        dff = dff.rename(columns={'proposer': 'userId', 'createdAt': 'unixDate'})
-        dff['daoId'] = row['id']
-        dff['daoName'] = row['name']
-        dff['actionType'] = 'proposal'
-        df = df.append(dff, ignore_index=True)
+        finally:
+            dff: pd.DataFrame = pd.DataFrame(proposals)
+            dff = dff.rename(columns={'proposer': 'userId', 'createdAt': 'unixDate'})
+            dff['daoId'] = row['id']
+            dff['daoName'] = row['name']
+            dff['actionType'] = 'proposal'
+            df = df.append(dff, ignore_index=True)
 
     print(f'Proposals requested in {round((datetime.now() - start).total_seconds(), 2)}s')
     return df
@@ -56,15 +65,23 @@ def get_votes(daos: pd.DataFrame) -> pd.DataFrame:
     start: datetime = datetime.now()
 
     for _, row in daos.iterrows():
-        votes: List[Dict] = n_requests(query=VOTE_QUERY, 
-            result_key='proposalVotes', dao_id=row['id'])
+        try:
+            votes: List[Dict] = n_requests(query=VOTE_QUERY, 
+                result_key='proposalVotes', dao_id=row['id'])
+        except Exception as e:
+            print(e)
+            time.sleep(45)
+            votes: List[Dict] = n_requests(query=VOTE_QUERY, 
+                result_key='proposalVotes', dao_id=row['id'])
+            print('Recovered: resuming requests')
 
-        dff: pd.DataFrame = pd.DataFrame(votes)
-        dff = dff.rename(columns={'voter': 'userId', 'createdAt': 'unixDate'})
-        dff['daoId'] = row['id']
-        dff['daoName'] = row['name']
-        dff['actionType'] = 'vote'
-        df = df.append(dff, ignore_index=True)
+        finally:
+            dff: pd.DataFrame = pd.DataFrame(votes)
+            dff = dff.rename(columns={'voter': 'userId', 'createdAt': 'unixDate'})
+            dff['daoId'] = row['id']
+            dff['daoName'] = row['name']
+            dff['actionType'] = 'vote'
+            df = df.append(dff, ignore_index=True)
 
     print(f'Votes requested in {round((datetime.now() - start).total_seconds(), 2)}s')
     return df
@@ -77,15 +94,23 @@ def get_stakes(daos: pd.DataFrame) -> pd.DataFrame:
     start: datetime = datetime.now()
 
     for _, row in daos.iterrows():
-        stakes: List[Dict] = n_requests(query=STAKE_QUERY, 
-            result_key='proposalStakes', dao_id=row['id'])
+        try:
+            stakes: List[Dict] = n_requests(query=STAKE_QUERY, 
+                result_key='proposalStakes', dao_id=row['id'])
+        except Exception as e:
+            print(e)
+            time.sleep(45)
+            stakes: List[Dict] = n_requests(query=STAKE_QUERY, 
+                result_key='proposalStakes', dao_id=row['id'])
+            print('Recovered: resuming requests')
 
-        dff: pd.DataFrame = pd.DataFrame(stakes)
-        dff = dff.rename(columns={'staker': 'userId', 'createdAt': 'unixDate'})
-        dff['daoId'] = row['id']
-        dff['daoName'] = row['name']
-        dff['actionType'] = 'stake'
-        df = df.append(dff, ignore_index=True)
+        finally:
+            dff: pd.DataFrame = pd.DataFrame(stakes)
+            dff = dff.rename(columns={'staker': 'userId', 'createdAt': 'unixDate'})
+            dff['daoId'] = row['id']
+            dff['daoName'] = row['name']
+            dff['actionType'] = 'stake'
+            df = df.append(dff, ignore_index=True)
 
     print(f'Stakes requested in {round((datetime.now() - start).total_seconds(), 2)}s')
     return df
@@ -93,8 +118,11 @@ def get_stakes(daos: pd.DataFrame) -> pd.DataFrame:
 
 if __name__ == '__main__':
     daos: pd.DataFrame = get_daos_id()
+    time.sleep(30)
     df: pd.DataFrame = get_proposals(daos)
+    time.sleep(30)
     df = df.append(get_votes(daos), ignore_index=True)
+    time.sleep(30)
     df = df.append(get_stakes(daos), ignore_index=True)
 
     # column reorder
