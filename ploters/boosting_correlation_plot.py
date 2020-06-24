@@ -122,13 +122,18 @@ if __name__ == '__main__':
     # df = df[df['activityPercentage'] > 50]
     # print(df[['nUsers', 'nProposals', 'nBoost', 'nPropAccepted', 'nPropRejected']].corr(method='pearson'))
     # print(df[['nUsers', 'nProposals', 'nPropAccepted', 'nPropRejected', 'nPropStaked', 'nBoost']].corr(method='spearman'))
-    
-    df = df.rename(columns={'nUsers': 'Users', 'stakePercentage': 'Staked proposals %'})
+    # print(df['nProposals'].quantile([.25, .5, .75]))
+    # print(len(df[df['nUsers'] > 20]))
+
+    df = df.rename(columns={
+        'nUsers': 'Users', 
+        'stakePercentage': 'Staked proposals %',
+        'nPropStaked': 'Staked Proposals'})
 
     sns.set(style="white", color_codes=True)
     j = sns.jointplot(
         x=df["Users"], 
-        y=df["Staked proposals %"], 
+        y=df["Staked Proposals"], 
         kind='scatter', 
         s=100, 
         color=PLOT_COLOR, 

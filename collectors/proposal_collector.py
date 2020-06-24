@@ -9,7 +9,7 @@ DAO_QUERY: str = '{{daos(where: {{register: "registered"}}, first: {0}, skip: {1
 
 PROPOSAL_QUERY: str = '{{proposals(where: {{dao: "{0}", executedAt_not: null}}, first: {1}, skip: {2}\
 ){{id createdAt boostedAt totalRepWhenExecuted votesFor votesAgainst stakesFor stakesAgainst winningOutcome \
-stakes{{staker}}}}}}'
+stakes{{staker}} genesisProtocolParams{{queuedVoteRequiredPercentage}}}}}}'
 
 
 def get_daos_id() -> pd.DataFrame:
@@ -33,10 +33,15 @@ def get_proposals(daos: pd.DataFrame) -> pd.DataFrame:
         proposals: List[Dict] = n_requests(query=PROPOSAL_QUERY, 
             result_key='proposals', dao_id=row['id'])
 
-        # calculate diferent stakers
+        # add dict parameter as just parameter
         for p in proposals:
+            # calculate diferent stakers
             p['differentStakers'] = len(set([x['staker'] for x in p['stakes']]))
             del p['stakes']
+
+            # unwrap vote percentage
+            p['quorum'] = p['genesisProtocolParams']['queuedVoteRequiredPercentage']
+            del p['genesisProtocolParams']
 
         dff: pd.DataFrame = pd.DataFrame(proposals)
         dff = dff.rename(columns={'id': 'proposalId', 'winningOutcome': 'hasPassed'})
@@ -69,6 +74,7 @@ if __name__ == '__main__':
         'votesFor',
         'votesAgainst',
         'hasPassed',
+        'quorum',
         'boostedAt',
         'stakesFor',
         'stakesAgainst',
