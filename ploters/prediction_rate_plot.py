@@ -111,6 +111,7 @@ def update_layout(fig: go.Figure) -> None:
             'tickfont': {'size': 14},
         },
         plot_bgcolor="white",
+        #showlegend=False,
         legend={'orientation': 'h', 'x': 0, 'y': 1.2},
     )
 
@@ -126,12 +127,22 @@ if __name__ == '__main__':
     # sort by number of users
     daos = daos.sort_values(by=['nUsers'])
 
-    # add color by number of users
-    daos['color'] = ''
+    # median of number users
     median: float = daos['nUsers'].quantile(.5)
 
+    # add colours by number of proposals
+    daos['color'] = '#BDBDBD'
     for i, row in daos.iterrows():
-        daos.loc[i, 'color'] = BLUE if row['nUsers'] < median else RED
+        if 0 < row['nProposals'] <= 10: 
+            daos.loc[i, 'color'] = '#E1BEE7'
+        elif 10 < row['nProposals'] <= 25: 
+            daos.loc[i, 'color'] = '#BA68C8'
+        elif 25 < row['nProposals'] <= 50: 
+            daos.loc[i, 'color'] = '#9C27B0'
+        elif 50 < row['nProposals'] <= 100: 
+            daos.loc[i, 'color'] = '#7B1FA2'
+        elif 100 < row['nProposals']: 
+            daos.loc[i, 'color'] = '#4A148C'
 
     # filters
     daos = daos[daos['name'] != 'BuffiDAO']
@@ -140,25 +151,94 @@ if __name__ == '__main__':
     # plot
     fig: go.Figure = go.Figure()
 
-    dff = daos[daos['color'] == BLUE]
+    dff = daos[daos['nUsers'] < median]
     fig.add_trace(go.Scatter(
         x=dff['name'], 
         y=dff['accuracy'],
         mode='markers',
-        marker_color=dff['color'],
-        marker_size=12,
-        marker_line_width=2,
-        name='Group A'))
+        marker=dict(
+            size=12,
+            color=dff['color']
+        ),
+        showlegend=False))
 
-    dff = daos[daos['color'] == RED]
+    # add vertical separation
+    fig.add_shape(
+        dict(
+            type="line",
+            x0="",
+            y0=0,
+            x1="",
+            y1=1,
+            line=dict(
+                color="grey",
+                width=3,
+                dash="dashdot",
+            )
+        )
+    )
+
+    dff = daos[daos['nUsers'] >= median]
     fig.add_trace(go.Scatter(
         x=dff['name'], 
         y=dff['accuracy'],
         mode='markers',
-        marker_color=dff['color'],
-        marker_size=12,
-        marker_line_width=2,
-        name='Group B'))
+        marker=dict(
+            size=12,
+            color=dff['color']
+        ),
+        showlegend=False))
+
+    # add empty elements for the legend
+    fig.add_trace(go.Scatter(
+        x=[None], 
+        y=[None],
+        name='0 > Proposals <= 10',
+        mode='markers',
+        marker=dict(
+            size=10,
+            color='#E1BEE7',
+        )))
+
+    fig.add_trace(go.Scatter(
+        x=[None], 
+        y=[None],
+        name='10 > Proposals <= 25',
+        mode='markers',
+        marker=dict(
+            size=10,
+            color='#BA68C8',
+        )))
+
+    fig.add_trace(go.Scatter(
+        x=[None], 
+        y=[None],
+        name='25 > Proposals <= 50',
+        mode='markers',
+        marker=dict(
+            size=10,
+            color='#9C27B0',
+        )))
+
+    fig.add_trace(go.Scatter(
+        x=[None], 
+        y=[None],
+        name='50 > Proposals <= 100',
+        mode='markers',
+        marker=dict(
+            size=10,
+            color='#7B1FA2',
+        )))
+
+    fig.add_trace(go.Scatter(
+        x=[None], 
+        y=[None],
+        name='100 > Proposals',
+        mode='markers',
+        marker=dict(
+            size=10,
+            color='#4A148C',
+        )))
 
     update_layout(fig=fig)
     fig.show()
