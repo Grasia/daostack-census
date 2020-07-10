@@ -133,6 +133,10 @@ if __name__ == '__main__':
     for i, row in daos.iterrows():
         daos.loc[i, 'color'] = BLUE if row['nUsers'] < median else RED
 
+    # filters
+    daos = daos[daos['name'] != 'BuffiDAO']
+    daos = daos[daos['name'] != 'Fortmatic DAO']
+
     # plot
     fig: go.Figure = go.Figure()
 

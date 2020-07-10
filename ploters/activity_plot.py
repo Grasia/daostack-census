@@ -25,7 +25,7 @@ def get_months_between(date1: datetime, date2: datetime) -> int:
 
 def calculate_recent_activity(df: pd.DataFrame) -> Set[str]:
     comp_date: datetime.date = datetime.today().date().replace(day=1)
-    comp_date = comp_date + relativedelta(months=-3)
+    comp_date = comp_date + relativedelta(months=-1)
     actives: Set[str] = set()
 
     ids: List[str] = df.groupby(['daoId']).size().reset_index()['daoId'].tolist()

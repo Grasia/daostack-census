@@ -34,6 +34,7 @@ def update_layout(fig: go.Figure) -> None:
             'dtick': 1,
         },
         plot_bgcolor="white",
+        legend={'orientation': 'h', 'x': 0, 'y': 1.2},
     )
 
 
@@ -46,12 +47,14 @@ if __name__ == '__main__':
         x=df['nUsers'].tolist(), 
         xbins={'size': 10.0, 'start': 1.0},
         marker_color=BLUE,
+        name='DAOs in bins of 10',
         )])
 
     fig.add_trace(go.Scatter(
         x=[0, 0], 
         y=[0, len(df[df['nUsers'] == 0])],
-        line=dict(color='firebrick', width=4)
+        line=dict(color='firebrick', width=4),
+        name='DAOs with 0 users'
         ))
 
     update_layout(fig=fig)
@@ -63,12 +66,14 @@ if __name__ == '__main__':
         x=df['nProposals'].tolist(), 
         xbins={'size': 10.0, 'start': 1.0},
         marker_color=BLUE,
+        name='DAOs in bins of 10',
         )])
 
     fig.add_trace(go.Scatter(
         x=[0, 0], 
         y=[0, len(df[df['nProposals'] == 0])],
-        line=dict(color='firebrick', width=4)
+        line=dict(color='firebrick', width=4),
+        name='DAOs with 0 proposals'
         ))
 
     update_layout(fig=fig)
@@ -80,12 +85,14 @@ if __name__ == '__main__':
         x=df['nVotes'].tolist(), 
         xbins={'size': 10.0, 'start': 1.0},
         marker_color=BLUE,
+        name='DAOs in bins of 10',
         )])
 
     fig.add_trace(go.Scatter(
         x=[0, 0], 
         y=[0, len(df[df['nVotes'] == 0])],
-        line=dict(color='firebrick', width=4)
+        line=dict(color='firebrick', width=4),
+        name='DAOs with 0 votes'
         ))
 
     update_layout(fig=fig)
@@ -97,12 +104,14 @@ if __name__ == '__main__':
         x=df['nStakes'].tolist(), 
         xbins={'size': 10.0, 'start': 1.0},
         marker_color=BLUE,
+        name='DAOs in bins of 10',
         )])
 
     fig.add_trace(go.Scatter(
         x=[0, 0], 
         y=[0, len(df[df['nStakes'] == 0])],
-        line=dict(color='firebrick', width=4)
+        line=dict(color='firebrick', width=4),
+        name='DAOs with 0 stakes'
         ))
 
     update_layout(fig=fig)

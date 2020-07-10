@@ -133,7 +133,7 @@ if __name__ == '__main__':
     sns.set(style="white", color_codes=True)
     j = sns.jointplot(
         x=df["Users"], 
-        y=df["Staked Proposals"], 
+        y=df["Staked proposals %"], 
         kind='scatter', 
         s=100, 
         color=PLOT_COLOR, 

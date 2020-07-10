@@ -21,6 +21,7 @@ def update_layout(df: pd.DataFrame, fig: go.Figure) -> None:
             'showline': True, 
             'linewidth': 2, 
             'linecolor': 'black',
+            'tickfont': {'size': 14},
         },
         yaxis={
             'showgrid': True,
@@ -32,6 +33,8 @@ def update_layout(df: pd.DataFrame, fig: go.Figure) -> None:
             'showline': True, 
             'linewidth': 2, 
             'linecolor': 'black',
+            #'dtick': 20,
+            'tickfont': {'size': 14},
         },
         plot_bgcolor="white",
     )
