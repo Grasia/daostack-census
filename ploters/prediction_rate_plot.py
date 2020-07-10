@@ -133,16 +133,16 @@ if __name__ == '__main__':
     # add colours by number of proposals
     daos['color'] = '#BDBDBD'
     for i, row in daos.iterrows():
-        if 0 < row['nProposals'] <= 10: 
+        if 0 < row['nProposals'] < 11: 
             daos.loc[i, 'color'] = '#E1BEE7'
-        elif 10 < row['nProposals'] <= 25: 
+        elif 10 < row['nProposals'] < 26: 
             daos.loc[i, 'color'] = '#BA68C8'
-        elif 25 < row['nProposals'] <= 50: 
-            daos.loc[i, 'color'] = '#9C27B0'
-        elif 50 < row['nProposals'] <= 100: 
-            daos.loc[i, 'color'] = '#7B1FA2'
-        elif 100 < row['nProposals']: 
+        elif 25 < row['nProposals'] < 51: 
+            daos.loc[i, 'color'] = '#8E24AA'
+        elif 50 < row['nProposals'] < 101: 
             daos.loc[i, 'color'] = '#4A148C'
+        elif 100 < row['nProposals']: 
+            daos.loc[i, 'color'] = '#C2185B'
 
     # filters
     daos = daos[daos['name'] != 'BuffiDAO']
@@ -151,7 +151,7 @@ if __name__ == '__main__':
     # plot
     fig: go.Figure = go.Figure()
 
-    dff = daos[daos['nUsers'] < median]
+    dff = daos[daos['nUsers'] <= median]
     fig.add_trace(go.Scatter(
         x=dff['name'], 
         y=dff['accuracy'],
@@ -178,7 +178,7 @@ if __name__ == '__main__':
         )
     )
 
-    dff = daos[daos['nUsers'] >= median]
+    dff = daos[daos['nUsers'] > median]
     fig.add_trace(go.Scatter(
         x=dff['name'], 
         y=dff['accuracy'],
@@ -193,7 +193,7 @@ if __name__ == '__main__':
     fig.add_trace(go.Scatter(
         x=[None], 
         y=[None],
-        name='0 > Proposals <= 10',
+        name='0 > Proposals < 11',
         mode='markers',
         marker=dict(
             size=10,
@@ -203,7 +203,7 @@ if __name__ == '__main__':
     fig.add_trace(go.Scatter(
         x=[None], 
         y=[None],
-        name='10 > Proposals <= 25',
+        name='10 > Proposals < 26',
         mode='markers',
         marker=dict(
             size=10,
@@ -213,21 +213,21 @@ if __name__ == '__main__':
     fig.add_trace(go.Scatter(
         x=[None], 
         y=[None],
-        name='25 > Proposals <= 50',
+        name='25 > Proposals < 51',
         mode='markers',
         marker=dict(
             size=10,
-            color='#9C27B0',
+            color='#8E24AA',
         )))
 
     fig.add_trace(go.Scatter(
         x=[None], 
         y=[None],
-        name='50 > Proposals <= 100',
+        name='50 > Proposals < 101',
         mode='markers',
         marker=dict(
             size=10,
-            color='#7B1FA2',
+            color='#4A148C',
         )))
 
     fig.add_trace(go.Scatter(
@@ -237,7 +237,7 @@ if __name__ == '__main__':
         mode='markers',
         marker=dict(
             size=10,
-            color='#4A148C',
+            color='#C2185B',
         )))
 
     update_layout(fig=fig)
