@@ -171,7 +171,7 @@ if __name__ == '__main__':
             x1="",
             y1=1,
             line=dict(
-                color="grey",
+                color="black",
                 width=3,
                 dash="dashdot",
             )
