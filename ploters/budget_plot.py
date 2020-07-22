@@ -2,6 +2,8 @@ import os
 import pandas as pd
 import plotly.graph_objects as go
 
+GRID_COLOR: str = '#B0BEC5'
+
 if __name__ == '__main__':
     filename: str = os.path.join('datawarehouse', 'census.csv')
     df: pd.DataFrame = pd.read_csv(filename, header=0)
@@ -23,13 +25,37 @@ if __name__ == '__main__':
     # Change layout
     fig.update_layout(
         barmode='stack',
-        yaxis= {'ticksuffix': '$'},
+        xaxis={
+            'ticks': 'outside',
+            'ticklen': 5,
+            'tickwidth': 2,
+            'tickangle': 45,
+            'tickfont': {'size': 14},
+            'showline': True, 
+            'linewidth': 2, 
+            'linecolor': 'black',
+        },
+        yaxis={
+            'tick0': 0,
+            'dtick': 1000,
+            'ticksuffix': '$',
+            'showgrid': True,
+            'gridwidth': 0.5,
+            'gridcolor': GRID_COLOR,
+            'ticks': 'outside',
+            'ticklen': 5,
+            'tickwidth': 2,
+            'tickfont': {'size': 14},
+            'showline': True, 
+            'linewidth': 2, 
+            'linecolor': 'black',
+        },
+        plot_bgcolor="white",
         legend=dict(
             x=0.01,
             y=0.98,
             traceorder="normal",
             font=dict(
-                family="sans-serif",
                 size=12,
                 color="black"
             ),

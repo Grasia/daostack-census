@@ -5,35 +5,56 @@ import plotly.graph_objects as go
 DATE_FORMAT: str = '%b, %Y'
 DARK_BLUE: str = '#2471a3'
 LIGHT_BLUE: str = '#d4e6f1'
+GRID_COLOR: str = '#B0BEC5'
 
 
-def update_layout(df: pd.DataFrame, fig: go.Figure, title: str) -> None:
+def update_layout(df: pd.DataFrame, fig: go.Figure) -> None:
     fig.update_layout(
         xaxis={
             'tickvals': df['date'],
             'tickformat': DATE_FORMAT,
             'tickangle': 45,
             'type': 'date',
+            'ticks': 'outside',
+            'ticklen': 5,
+            'tickwidth': 2,
+            'showline': True, 
+            'linewidth': 2, 
+            'linecolor': 'black',
+            'tickfont': {'size': 14},
         },
         yaxis={
-            'title': title,
+            'showgrid': True,
+            'gridwidth': 0.5,
+            'gridcolor': GRID_COLOR,
+            'ticks': 'outside',
+            'ticklen': 5,
+            'tickwidth': 2,
+            'showline': True, 
+            'linewidth': 2, 
+            'linecolor': 'black',
+            #'dtick': 20,
+            'tickfont': {'size': 14},
         },
         plot_bgcolor="white",
     )
 
 
-def plot(df: pd.DataFrame, y_key: str, title: str) -> None:
-    colors: list = [LIGHT_BLUE] * len(df.index)
-    colors[-1] = DARK_BLUE
+def plot(df: pd.DataFrame, y_key: str) -> None:
+    colors: list = [DARK_BLUE] * len(df.index)
+    colors[-1] = LIGHT_BLUE
 
     fig = go.Figure(data=[
-        go.Bar(
+        go.Scatter(
             x=df['date'], 
             y=df[y_key],
-            marker_color=colors)
+            marker_color=colors,
+            marker_size=12,
+            marker_line_width=2,
+            line_color=DARK_BLUE)
     ])
 
-    update_layout(df, fig, title)
+    update_layout(df, fig)
     fig.show()
 
 
@@ -61,15 +82,28 @@ if __name__ == '__main__':
     # active DAOs
     dff = df.drop(columns=['daoName', 'actionType', 'userId'])
     dff = process_df(dff, 'daoId')
-    plot(dff, 'actives','Number of active DAOs')
+    print(f'Mean active DAOs = {sum(dff["actives"].tolist()) / len(dff["actives"].tolist())}')
+    plot(dff, 'actives')
 
     # active users
-    dff = df.drop(columns=['daoName', 'daoId', 'actionType'])
+    dff = df
+    #dff = dff[dff['daoId'] == '0x294f999356ed03347c7a23bcbcf8d33fa41dc830']
+    dff = dff.drop(columns=['daoName', 'daoId', 'actionType'])
     dff = process_df(dff, 'userId')
-    plot(dff, 'actives', 'Number of active users')
+    print(f'Mean active users = {sum(dff["actives"].tolist()) / len(dff["actives"].tolist())}')
+    plot(dff, 'actives')
 
     # new proposals
     dff = df[df['actionType'] == 'proposal']
     dff = dff.drop(columns=['daoName', 'daoId', 'actionType', 'userId'])
-    dff = dff.groupby(['date']).size().reset_index(name='n_proposals')
-    plot(dff, 'n_proposals', 'Number of new proposals')
+    dff = dff.groupby(['date']).size().reset_index(name='nProposals')
+    print(f'Total proposals = {sum(dff["nProposals"].tolist())}')
+    plot(dff, 'nProposals')
+
+    # total actions
+    dff = df
+    # dff = dff[dff['daoId'] == '0x294f999356ed03347c7a23bcbcf8d33fa41dc830']
+    dff = dff.drop(columns=['daoName', 'daoId', 'actionType', 'userId'])
+    dff = dff.groupby(['date']).size().reset_index(name='actions')
+    print(f'Total actions = {sum(dff["actions"].tolist())}')
+    plot(dff, 'actions')
