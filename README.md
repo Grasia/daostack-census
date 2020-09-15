@@ -18,6 +18,7 @@ For ploting you need tkinter, so, if you are in Ubuntu install it with:
 You have to load the `datawarehouse/` to use the plot scripts. So, to update it, use the following script:
 
 `chmod +x collectors/update_datawarehouse.sh`
+
 `./collectors/update_datawarehouse.sh`
 
 Now, you are able to show the data in `datawarehouse/`, do it using the scripts located in `ploters/`.
