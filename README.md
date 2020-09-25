@@ -1,6 +1,28 @@
 # daostack-census
 Scripts and data for a Daostack census
 
+## Metrics and plots
+* [Activity chart by DAO](https://github.com/Grasia/daostack-census/blob/master/ploters/activity_plot.py)
+* [Boosting correlation chart](https://github.com/Grasia/daostack-census/blob/master/ploters/boosting_correlation_plot.py)
+* [DAO's budget chart by token](https://github.com/Grasia/daostack-census/blob/master/ploters/budget_plot.py)
+* [DAO stats correlation](https://github.com/Grasia/daostack-census/blob/master/ploters/dao_stats_correlation_plot.py)
+   * User vs proposals correlation 
+   * Users vs votes correlation
+   * Users vs stakes correlation
+   * Users vs holdings correlation
+* [DAO stats distribution](https://github.com/Grasia/daostack-census/blob/master/ploters/distribution_plot.py)
+   * Users distribution
+   * Proposals distribution
+   * Votes distribution
+   * Stakes distribution
+* [Prediction rate by DAO](https://github.com/Grasia/daostack-census/blob/master/ploters/prediction_rate_plot.py)
+* [Timeseries metrics of DAOstack](https://github.com/Grasia/daostack-census/blob/master/ploters/time_serie_plot.py)
+   * Active DAOs
+   * Active users
+   * New proposals
+   * Activity
+
+
 ## Installing
 Requirements:
 * Python >= 3.6
